@@ -1,94 +1,92 @@
-# Obsidian Sample Plugin
+# 🎶 Cancionero
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+**Cancionero** is an [Obsidian](https://obsidian.md) plugin for writing, studying, and visualizing songs using **harmonic degrees**, **Roman numeral notation**, and **synchronized lyrics**.  
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+It turns your vault into a simple digital **songbook** that works beautifully on both desktop 💻 and mobile 📱.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+---
 
-## First time developing plugins?
+## ✨ Features
 
-Quick starting guide for new plugin devs:
+- 🎼 Write songs in plain text using chords + lyrics blocks
+- 🔀 Toggle **Lyrics**, **Chords**, or **Both** views
+- 🎹 Roman numeral notation with ♭ / ♯ accidentals
+- 📖 Section headers `[Verso]`, `[Coro]`, etc. with `{Mod …}` for modulations
+- 📐 Compact **4-bar chord charts**
+- 📲 Responsive design: auto reflows on mobile screens
+- 🔁 Repeat markers `(x2)` show as `×2` in chord view
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+---
 
-## Releasing new releases
+## ⚡ Installation
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+1. Build the plugin:
+   ```bash
+   npm install
+   npm run build
+   ```
+2. Copy into your vault:
+   ```
+   <Vault>/.obsidian/plugins/cancionero/
+   ```
+   Required files:
+   - `manifest.json`
+   - `main.js`
+   - `styles.css`
+   - `versions.json` (optional)
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+3. Enable in Obsidian:
+   - Settings → Community Plugins → Installed plugins → **Cancionero**
 
-## Adding your plugin to the community plugin list
+---
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+## 🎤 Usage
 
-## How to use
+Songs are written in fenced code blocks with the `song` language.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+### Example
 
-## Manually installing the plugin
+```song
+[Verse]
+I                     | IIIm7                      | IIIm bIIIm  | IIm
+Quedate sentada donde estas, hasta el final de la canción, como si nada
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+IIm                          | IIm7                     | V            | I
+piensa que a tu lado hay un control, que puede malinterpretar, ciertas miradas
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+[Chorus] {Mod Im}
+I                   | IIIm                | ♭VII I      | IV
+Soy un invitado de ocasión y no pretendo figurar en tu programa
 
-## Funding URL
+IV          V               | I    VIm          | IIm V     | I
+Soy como lo fui siempre en tu vida, una noche de debut y despedida
 
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+[End] {Imaj}
+I
+Quédate sentada donde estás...
 ```
 
-If you have multiple URLs, you can also do:
+- Use `|` pipes for bar boundaries  
+- Use `[Section]` headers to organize verses, choruses, etc.  
+- Use `{Mod …}` to indicate modulations and `{I}` to return to tonic  
+- Add `(x2)` in a lyric line to mark repeats  
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+---
 
-## API Documentation
+## 🛣️ Roadmap
 
-See https://github.com/obsidianmd/obsidian-api
+**Near-term**
+- [ ] 🖨️ PDF / image export  
+- [ ] ⚙️ Global plugin settings (default view, font size)  
+- [ ] 🔄 Toggle between degree notation and absolute chords  
+- [ ] 🎵 Transposition engine (pick new tonic → auto-shift chords)  
+
+**Medium-term**
+- [ ] 🌐 Import chord sheets from the web → auto-convert to degrees  
+- [ ] ✍️ Visual “easy editor” for bar splitting and chord placement  
+
+---
+
+## 📌 Status
+
+🚧 This plugin is in **early development**. Core features (notation parsing, rendering, responsive layouts) are already working. Expect rapid iteration. Contributions and feedback welcome.

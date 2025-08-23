@@ -1,8 +1,95 @@
-/*
+/* Modes */
+.cancionero-root[data-mode="chords"] .cancionero-rows-plain { display: none; }
+.cancionero-root[data-mode="lyrics"] .cancionero-rows-plain .cancionero-chords-plain { display: none; }
+.cancionero-root[data-mode="lyrics"] .cancionero-chart { display: none; }
+.cancionero-root[data-mode="both"]   .cancionero-chart { display: none; }
+/* Hide modulation note in Lyrics view */
+.cancionero-root[data-mode="lyrics"] .cancionero-mod { display: none; }
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* Typography */
+.cancionero-root,
+.cancionero-section,
+.cancionero-row-plain,
+.cancionero-chords-plain,
+.cancionero-lyrics {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.12;            /* tight baseline */
+  font-variant-ligatures: none;
+  letter-spacing: 0;
+  tab-size: 4;
+  color: inherit;
+}
 
-If your plugin does not need CSS, delete this file.
+/* Controls */
+.cancionero-buttons { display: flex; gap: 8px; margin-bottom: 8px; }
 
-*/
+/* Section header with brackets */
+.cancionero-section-header {
+  font-weight: 700;
+  margin: 18px 0 4px;           /* bigger default paragraph break */
+}
+.cancionero-section-header.prev-gap {
+  margin-top: 26px;             /* even bigger if source had a blank line before header */
+}
+
+/* Plain rows (Both/Lyrics) */
+.cancionero-rows-plain { margin-bottom: 6px; }
+.cancionero-row-plain {
+  display: flex;
+  flex-direction: column;
+  gap: 0;                        /* no declared gap between lines */
+  margin: 0 0 2px 0;             /* minimal gap between rows */
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.cancionero-row-plain.prev-gap { margin-top: 12px; }  /* blank line in source => paragraph break before row */
+
+.cancionero-chords-plain,
+.cancionero-lyrics {
+  white-space: pre;
+  line-height: 1.0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+/* Pull chords and lyrics visually closer together */
+.cancionero-chords-plain { margin-bottom: -20px !important; }
+.cancionero-lyrics { margin-bottom: -20px !important; }
+.cancionero-chords-plain strong { font-weight: 700; }
+
+/* Chart (Chords mode) */
+.cancionero-chart { display: grid; gap: 6px; }
+.cancionero-chart-line {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.cancionero-chart-bar {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  white-space: nowrap;
+  background: transparent;
+}
+
+.cancionero-chart-bar {
+  position: relative; /* for badge anchoring */
+}
+
+.cancionero-repeat-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  font-size: 11px;
+  opacity: 0.75;
+}
