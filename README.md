@@ -15,6 +15,7 @@ It turns your vault into a simple digital **songbook** that works beautifully on
 - 📐 Compact **4-bar chord charts**
 - 📲 Responsive design: auto reflows on mobile screens
 - 🔁 Repeat markers `(x2)` show as `×2` in chord view
+- 🪄 **Convert real chord sheets into degrees** with a single command
 
 ---
 
@@ -71,22 +72,45 @@ Quédate sentada donde estás...
 - Use `{Mod …}` to indicate modulations and `{I}` to return to tonic  
 - Add `(x2)` in a lyric line to mark repeats  
 
+### Convert real chords → degrees
+
+Use the command palette (**Cmd+P / Ctrl+P**) → **Convert chords to degrees**.  
+A modal will ask for the tonic key.  
+
+**Example input:**
+
+```
+Dmaj7 Em F#m7 Fdim7
+Sé    que    aun
+    Em                  A7sus   A7
+Me queda una oportunidad
+```
+
+**With tonic = D, becomes:**
+
+```
+Imaj7 IIm IIIm7 ♭III°7
+Sé    que    aun
+IIm                  V7sus   V7
+Me queda una oportunidad
+```
+
 ---
 
 ## 🛣️ Roadmap
 
 **Near-term**
+- [ ] 🌐 Smarter import of chord sheets from the web → auto-convert to degrees  
+- [ ] ✍️ Visual “easy editor” for bar splitting and chord placement  
+
+**Medium-term**
 - [ ] 🖨️ PDF / image export  
 - [ ] ⚙️ Global plugin settings (default view, font size)  
 - [ ] 🔄 Toggle between degree notation and absolute chords  
 - [ ] 🎵 Transposition engine (pick new tonic → auto-shift chords)  
 
-**Medium-term**
-- [ ] 🌐 Import chord sheets from the web → auto-convert to degrees  
-- [ ] ✍️ Visual “easy editor” for bar splitting and chord placement  
-
 ---
 
 ## 📌 Status
 
-🚧 This plugin is in **early development**. Core features (notation parsing, rendering, responsive layouts) are already working. Expect rapid iteration. Contributions and feedback welcome.
+🚧 This plugin is in **early development**. Core features (notation parsing, rendering, conversion, responsive layouts) are already working. Expect rapid iteration. Contributions and feedback welcome.
