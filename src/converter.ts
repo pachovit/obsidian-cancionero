@@ -1,3 +1,5 @@
+import { ABSOLUTE_CHORD_RE } from "./chordPatterns";
+
 // Convert absolute chords (Dmaj7, Em, F#m7, E/G#...) to Roman degrees for a given tonic.
 // Keeps quality/alterations as suffixes. Slash bass becomes "/<degree>".
 const NOTE_PC: Record<string, number> = {
@@ -34,10 +36,6 @@ type Match = {
 	index: number; // start index in line
 };
 
-// A-G, optional accidental, then quality/extensions; optional "/bass"
-const CHORD_RE =
-	/\b([A-G](?:#|b)?)(maj7|maj9|maj11|maj13|m|m7|m9|m11|m13|m6|mMaj7|dim7|dim|aug|add\d+|sus\d*|°|ø|6|7|9|11|13|b5|#5|b9|#9|b11|#11|b13|#13|(?:m)?7b5|(?:m)?7#5|(?:m)?7)?((?:add\d+|sus\d*|b5|#5|b9|#9|b11|#11|b13|#13)*)?(?:\/([A-G](?:#|b)?))?\b/g;
-
 export function convertAbsoluteToDegrees(input: string, tonic: string): string {
 	const T = normNote(tonic);
 	if (!(T in NOTE_PC)) throw new Error(`Unknown tonic: ${tonic}`);
@@ -46,11 +44,11 @@ export function convertAbsoluteToDegrees(input: string, tonic: string): string {
 	return input
 		.split(/\r?\n/)
 		.map((line) => {
-			CHORD_RE.lastIndex = 0;
+			ABSOLUTE_CHORD_RE.lastIndex = 0;
 			const parts: string[] = [];
 			let last = 0;
 			let m: RegExpExecArray | null;
-			while ((m = CHORD_RE.exec(line)) !== null) {
+			while ((m = ABSOLUTE_CHORD_RE.exec(line)) !== null) {
 				const [raw, root, s1, s2, slash] = m;
 				const suffix = (s1 || "") + (s2 || "");
 				parts.push(line.slice(last, m.index));

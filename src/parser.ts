@@ -1,4 +1,5 @@
-// src/parser.ts
+import { DEGREE_CHORD_RE } from "./chordPatterns";
+
 export interface ChordToken {
 	text: string;
 	startCol: number;
@@ -35,9 +36,6 @@ const TAB_WIDTH = 4;
 const HEADER_RE = /^\s*\[([^\]]+)\]\s*$/;
 const MOD_RE = /^\s*\{\s*(.+?)\s*\}\s*$/;
 const REPEAT_HINT_RE = /[\(\[]\s*x\s*(\d+)\s*[\)\]]/i;
-
-const CHORD_RE =
-	/\b(b|#)?(I{1,3}|IV|V|VI|VII|i{1,3}|iv|v|vi|vii)(m|°|dim|aug|ø)?((?:maj7|6|7|9|11|13|add\d+|b\d+|#\d+)*)\b/g;
 
 function expandTabs(s: string): string {
 	return s.replace(/\t/g, " ".repeat(TAB_WIDTH));
@@ -143,10 +141,11 @@ function extractBars(line: string): number[] {
 
 function extractChords(line: string): ChordToken[] {
 	const toks: ChordToken[] = [];
-	CHORD_RE.lastIndex = 0;
+	DEGREE_CHORD_RE.lastIndex = 0;
 	let m: RegExpExecArray | null;
-	while ((m = CHORD_RE.exec(line)) !== null)
+	while ((m = DEGREE_CHORD_RE.exec(line)) !== null) {
 		toks.push({ text: m[0], startCol: m.index });
+	}
 	return toks;
 }
 
