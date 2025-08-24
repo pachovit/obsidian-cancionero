@@ -16,6 +16,8 @@ It turns your vault into a simple digital **songbook** that works beautifully on
 - 📲 Responsive design: auto reflows on mobile screens
 - 🔁 Repeat markers `(x2)` show as `×2` in chord view
 - 🪄 **Convert real chord sheets into degrees** with a single command
+- ↔️ Chord grouping logic: lines not starting with | merge into the previous bar, even across sections
+- ⬜ Blank lines in input are reflected in Lyrics and Both views
 
 ---
 
@@ -49,21 +51,19 @@ Songs are written in fenced code blocks with the `song` language.
 
 ```song
 [Verse]
-I                     | IIIm7                      | IIIm bIIIm  | IIm
+|I                     | IIIm7                      | IIIm bIIIm  | IIm
 Quedate sentada donde estas, hasta el final de la canción, como si nada
-
-IIm                          | IIm7                     | V            | I
+|IIm                          | IIm7                     | V            | I
 piensa que a tu lado hay un control, que puede malinterpretar, ciertas miradas
 
 [Chorus] {Mod Im}
-I                   | IIIm                | ♭VII I      | IV
+|I                   | IIIm                | ♭VII I      | IV
 Soy un invitado de ocasión y no pretendo figurar en tu programa
-
-IV          V               | I    VIm          | IIm V     | I
+|IV          V               | I    VIm          | IIm V     | I
 Soy como lo fui siempre en tu vida, una noche de debut y despedida
 
 [End] {Imaj}
-I
+|I
 Quédate sentada donde estás...
 ```
 
@@ -71,6 +71,7 @@ Quédate sentada donde estás...
 - Use `[Section]` headers to organize verses, choruses, etc.  
 - Use `{Mod …}` to indicate modulations and `{I}` to return to tonic  
 - Add `(x2)` in a lyric line to mark repeats  
+- If a chord line does **not** start with a pipe `|`, its leading chords are merged into the previous bar  
 
 ### Convert real chords → degrees
 
@@ -89,9 +90,9 @@ Me queda una oportunidad
 **With tonic = D, becomes:**
 
 ```
-Imaj7 IIm IIIm7 ♭III°7
+|Imaj7 IIm IIIm7 ♭III°7
 Sé    que    aun
-IIm                  V7sus   V7
+|IIm                  V7sus   V7
 Me queda una oportunidad
 ```
 
