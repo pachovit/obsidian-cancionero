@@ -1,57 +1,57 @@
 import { parseSong, Song } from "../src/parser";
 import { renderSong } from "../src/renderer";
 
-/* ---------- fixtures ---------- */
+/* ---------- Fixtures ---------- */
 
 const INPUT = String.raw`
 \`\`\`song
 [Intro]
-|   Em         A7   |    Dmaj7  Cdim
+|   IIm         V7   |    Imaj7  ♯VIdim
 No existe un momento del día,
 
-|      Em        Gm7   |  Dmaj7 
+|      IIm        IVm7   |  Imaj7 
 En que pueda apartarme de ti.
 
-|  C#m7b5    FA#7   | Bm7
+|  VIIm7b5    III7   | VIm7
 El mundo parece distinto,
 
-| E7                |   Em  Bb7 | A7 |
+| II7                |   IIm  ♯V7 | V7 |
 Cuando no estás junto a mí.
 
 [Verso]
 
-       Bdim   |  Em     |  A7
+       VIdim   |  IIm     |  V7
 No hay bella melodía,
 
-|                Dmaj7 | Em 
+|                Imaj7 | IIm 
 En que no surjas tú.
 
-   F#m         | Em
+   IIIm         | IIm
 Ni yo quiero escucharla,
 
-A7            |   Dmaj
+V7            |   Imaj7
 Si no la escuchas tú.
 \`\`\`
 `.trim();
 
 const EXPECT_BOTH = `
 [Intro]
-    Em         A7        Dmaj7  Cdim
+    IIm         V7        Imaj7  ♯VIdim
 No existe un momento del día,
-       Em        Gm7      Dmaj7 
+       IIm        IVm7      Imaj7 
 En que pueda apartarme de ti.
-   C#m7b5    FA#7     Bm7
+   VIIm7♭5    III7     VIm7
 El mundo parece distinto,
-  E7                    Em  Bb7   A7  
+  II7                    IIm  ♯V7   V7  
 Cuando no estás junto a mí.
 [Verso]
-       Bdim      Em        A7
+       VIdim      IIm        V7
 No hay bella melodía,
-                 Dmaj7   Em 
+                 Imaj7   IIm 
 En que no surjas tú.
-   F#m           Em
+   IIIm           IIm
 Ni yo quiero escucharla,
-A7                Dmaj
+V7                Imaj7
 Si no la escuchas tú.
 `.trim();
 
@@ -71,44 +71,34 @@ Si no la escuchas tú.
 
 const EXPECT_CHORDS = `
 [Intro]
-Em
-A7
-Dmaj7
-Cdim
-Em
-Gm7
-Dmaj7
-C#m7b5
-FA#7
-Bm7
-E7
-Em
-Bb7
-A7
-
+IIm V7
+Imaj7 ♯VIdim
+IIm IVm7
+Imaj7
+VIIm7♭5 III7
+VIm7
+II7
+IIm ♯V7
+V7
 [Verso]
-Bdim
-Em
-A7
-Dmaj7
-Em
-F#m
-Em
-A7
-Dmaj
+VIdim
+IIm
+V7
+Imaj7
+IIm
+IIIm
+IIm
+V7
+Imaj7
 `.trim();
 
-/* ===================== Helpers ===================== */
+/* ---------- Helpers ---------- */
 
 function stripFence(s: string): string {
   const m = s.match(/```song([\s\S]*?)```/i);
   return (m ? m[1] : s).trim();
 }
 
-// Normalize for robust comparisons:
-// - Map Unicode ♯/♭ to ASCII #/b
-// - Collapse runs of spaces
-// - Trim line-end spaces and file-end spaces
 function normalize(s: string): string {
   return s
     .replace(/♯/g, "#")
@@ -119,8 +109,7 @@ function normalize(s: string): string {
     .trim();
 }
 
-// BOTH view as plain text from the parsed model:
-// keep spacing as authored, remove only pipes.
+// Both view: keep spacing as authored, remove pipes.
 function toBothText(song: Song): string {
   const out: string[] = [];
   for (const sec of song.sections) {
@@ -134,7 +123,7 @@ function toBothText(song: Song): string {
   return out.join("\n").trim();
 }
 
-// LYRICS view: headers + lyric lines; blank line between sections.
+// Lyrics view: headers + lyric lines, blank line between sections.
 function toLyricsText(song: Song): string {
   const out: string[] = [];
   for (const sec of song.sections) {
@@ -147,7 +136,7 @@ function toLyricsText(song: Song): string {
   return out.join("\n").trim();
 }
 
-// CHORDS view: one token per line, reading each bar slice left→right.
+// Chords view: one bar per line, preserving chords grouped as in each bar slice.
 function toChordsText(song: Song): string {
   const out: string[] = [];
   for (const sec of song.sections) {
@@ -155,18 +144,24 @@ function toChordsText(song: Song): string {
     for (const row of sec.rows) {
       for (const slice of row.barSlices) {
         const t = slice.text.trim();
-        if (!t) continue;
-        t.split(/\s+/).forEach((tok) => out.push(tok));
+        if (t) {
+          out.push(
+            t
+              .replace(/b/g, "♭")
+              .replace(/#/g, "♯")
+              .replace(/\s+/g, " ")
+              .trim(),
+          );
+        }
       }
     }
-    out.push("");
   }
   return out.join("\n").trim();
 }
 
 const parseFixture = () => parseSong(stripFence(INPUT));
 
-/* ===================== Tests ===================== */
+/* ---------- Tests ---------- */
 
 describe("views", () => {
   test("Both view", () => {
@@ -181,7 +176,7 @@ describe("views", () => {
     expect(normalize(toChordsText(parseFixture()))).toBe(normalize(EXPECT_CHORDS));
   });
 
-  test("renderer smoke", () => {
+  test("Renderer smoke", () => {
     const root = renderSong(parseFixture());
     expect(root.querySelectorAll(".cancionero-section").length).toBeGreaterThan(0);
     root.setAttribute("data-mode", "chords");
