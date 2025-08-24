@@ -8,79 +8,58 @@ const INPUT = String.raw`
 [Intro]
 |   IIm         V7   |    Imaj7  ♯VIdim
 No existe un momento del día,
-
 |      IIm        IVm7   |  Imaj7 
 En que pueda apartarme de ti.
-
 |  VIIm7b5    III7   | VIm7
 El mundo parece distinto,
-
 | II7                |   IIm  ♯V7 | V7 |
 Cuando no estás junto a mí.
 
 [Verso]
-
        VIdim   |  IIm     |  V7
 No hay bella melodía,
-
 |                Imaj7 | IIm 
 En que no surjas tú.
-
    IIIm         | IIm
 Ni yo quiero escucharla,
-
 | V7            |   Imaj7 |
 Si no la escuchas tú.
 
 [Coro]
-
 VIIsus    III#7   |  VIm7  | ♯IVm7b5
 Es que te has convertido,
-
     VII7     |  IIIm7  |  IIIm7b5
 En parte de mi alma.
-
    VI7     |   IIm    |   V7
 Ya nada me consuela,
-
            |      Imaj7 | ♯VI7
 Si no estás tú también.
 
 VI7          |    IIm   ♯IIm7 IIIm7 | IVm7
 Más allá de tus labios,
-
     ♯VI7        |  Imaj7  ♯VI7 |  VI7
 Del sol y las estrellas.
-
              |   IIm
 Contigo en la distancia,
-
 |     V7   | Imaj7 |
 Amada mía, estoy.
 
 [Coro]
-
 VIIsus    III#7   |  VIm7  | ♯IVm7b5
 Es que te has convertido,
-
     VII7     |  IIIm7  |  IIIm7b5
 En parte de mi alma.
-
    VI7     |   IIm    |   V7
 Ya nada me consuela,
-
               |   Imaj7 | ♯VI7
 Si no estás tú también.
 
 VI7          |    IIm   ♯IIm7 IIIm7 | IVm7
 Más allá de tus labios,
-
     ♯VI7        |  Imaj7  ♯VI7 |  VI7
 Del sol y las estrellas.
-
              |   IIm
 Contigo en la distancia,
-
 |     V7   | Imaj7 |
 Amada mía, estoy.
 \`\`\`
@@ -88,6 +67,7 @@ Amada mía, estoy.
 
 const EXPECT_BOTH = `
 [Intro]
+
     IIm         V7        Imaj7  ♯VIdim
 No existe un momento del día,
        IIm        IVm7      Imaj7 
@@ -97,6 +77,7 @@ El mundo parece distinto,
   II7                    IIm  ♯V7   V7  
 Cuando no estás junto a mí.
 [Verso]
+
        VIdim      IIm        V7
 No hay bella melodía,
                  Imaj7   IIm 
@@ -106,6 +87,7 @@ Ni yo quiero escucharla,
   V7                Imaj7  
 Si no la escuchas tú.
 [Coro]
+
 VIIsus    III♯7      VIm7    ♯IVm7♭5
 Es que te has convertido,
     VII7        IIIm7     IIIm7♭5
@@ -114,6 +96,7 @@ En parte de mi alma.
 Ya nada me consuela,
                   Imaj7   ♯VI7
 Si no estás tú también.
+
 VI7               IIm   ♯IIm7 IIIm7   IVm7
 Más allá de tus labios,
     ♯VI7           Imaj7  ♯VI7    VI7
@@ -123,6 +106,7 @@ Contigo en la distancia,
       V7     Imaj7  
 Amada mía, estoy.
 [Coro]
+
 VIIsus    III♯7      VIm7    ♯IVm7♭5
 Es que te has convertido,
     VII7        IIIm7     IIIm7♭5
@@ -131,6 +115,7 @@ En parte de mi alma.
 Ya nada me consuela,
                   Imaj7   ♯VI7
 Si no estás tú también.
+
 VI7               IIm   ♯IIm7 IIIm7   IVm7
 Más allá de tus labios,
     ♯VI7           Imaj7  ♯VI7    VI7
@@ -143,32 +128,38 @@ Amada mía, estoy.
 
 const EXPECT_LYRICS = `
 [Intro]
+
 No existe un momento del día,
 En que pueda apartarme de ti.
 El mundo parece distinto,
 Cuando no estás junto a mí.
 
 [Verso]
+
 No hay bella melodía,
 En que no surjas tú.
 Ni yo quiero escucharla,
 Si no la escuchas tú.
 
 [Coro]
+
 Es que te has convertido,
 En parte de mi alma.
 Ya nada me consuela,
 Si no estás tú también.
+
 Más allá de tus labios,
 Del sol y las estrellas.
 Contigo en la distancia,
 Amada mía, estoy.
 
 [Coro]
+
 Es que te has convertido,
 En parte de mi alma.
 Ya nada me consuela,
 Si no estás tú también.
+
 Más allá de tus labios,
 Del sol y las estrellas.
 Contigo en la distancia,
@@ -249,11 +240,13 @@ function normalize(s: string): string {
 }
 
 // Both view: keep spacing as authored, remove pipes.
+// Add a blank line when parser flagged a prior blank (row.prevGap).
 function toBothText(song: Song): string {
   const out: string[] = [];
   for (const sec of song.sections) {
     out.push(`[${sec.name}]`);
     for (const row of sec.rows) {
+      if (row.prevGap) out.push("");                         // <<< add this
       const chords = row.chordLine.replace(/\|/g, "");
       if (chords.trim()) out.push(chords);
       if (row.lyrics.trim()) out.push(row.lyrics);
@@ -262,12 +255,13 @@ function toBothText(song: Song): string {
   return out.join("\n").trim();
 }
 
-// Lyrics view: headers + lyric lines, blank line between sections.
+// Lyrics view: headers + lyric lines; reflect blank lines via row.prevGap.
 function toLyricsText(song: Song): string {
   const out: string[] = [];
   for (const sec of song.sections) {
     out.push(`[${sec.name}]`);
     for (const row of sec.rows) {
+      if (row.prevGap) out.push("");                         // <<< add this
       if (row.lyrics.trim()) out.push(row.lyrics);
     }
     out.push("");

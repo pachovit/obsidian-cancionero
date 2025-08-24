@@ -22,22 +22,15 @@ export function renderSong(song: Song): HTMLElement {
 	root.appendChild(content);
 
 	// sections
-	const sectionEls: HTMLElement[] = [];
 	for (const sec of song.sections) {
 		const secEl = document.createElement("div");
 		secEl.className = "cancionero-section";
-		sectionEls.push(secEl);
 
 		const header = document.createElement("div");
 		header.className = "cancionero-section-header";
 		if ((sec as any).prevGap) header.classList.add("prev-gap");
-		header.appendChild(textSpan(`[${sec.name}]`));
-		if (sec.note) {
-			const modSpan = document.createElement("span");
-			modSpan.className = "cancionero-mod";
-			modSpan.textContent = ` {${sec.note}}`;
-			header.appendChild(modSpan);
-		}
+		header.textContent =
+			`[${sec.name}]` + (sec.note ? ` {${sec.note}}` : "");
 		secEl.appendChild(header);
 
 		const rowsPlain = document.createElement("div");
@@ -54,7 +47,7 @@ export function renderSong(song: Song): HTMLElement {
 		content.appendChild(secEl);
 	}
 
-	// responsive reflow on resize
+	// responsive reflow
 	const ro = new ResizeObserver(() => {
 		const secNodes = content.querySelectorAll(".cancionero-section");
 		secNodes.forEach((secNode, idx) => {
@@ -79,12 +72,14 @@ export function renderSong(song: Song): HTMLElement {
 			const toks = [...row.chords].sort(
 				(a, b) => a.startCol - b.startCol,
 			);
-
 			const segments = wrapPair(chordLine, row.lyrics, maxCols);
 
+			let first = true;
 			for (const seg of segments) {
 				const wrap = document.createElement("div");
 				wrap.className = "cancionero-row-plain";
+				if (first && row.prevGap) wrap.classList.add("prev-gap"); // <-- visible blank line
+				first = false;
 
 				const chordsPre = document.createElement("pre");
 				chordsPre.className = "cancionero-chords-plain";
@@ -115,9 +110,8 @@ export function renderSong(song: Song): HTMLElement {
 			if (!row.barSlices.length) continue;
 
 			row.barSlices.forEach((slice, idx) => {
-				const txt = slice.text.trim(); // trim and skip empties
-				if (!txt) return;
-
+				const txt = slice.text.trim();
+				if (!txt) return; // skip empty leading cell when line starts with '|'
 				acc.push(txt);
 
 				const isRowEnd = idx === row.barSlices.length - 1;
@@ -158,13 +152,12 @@ export function renderSong(song: Song): HTMLElement {
 			if (tEnd <= start) continue;
 			if (tStart >= end) break;
 
-			if (tStart > cursor) {
+			if (tStart > cursor)
 				frag.appendChild(
 					document.createTextNode(
 						line.slice(cursor, Math.min(tStart, end)),
 					),
 				);
-			}
 
 			const s = Math.max(tStart, start);
 			const e = Math.min(tEnd, end);
@@ -238,11 +231,6 @@ export function renderSong(song: Song): HTMLElement {
 }
 
 /* utils */
-function textSpan(t: string): HTMLSpanElement {
-	const s = document.createElement("span");
-	s.textContent = t;
-	return s;
-}
 function clearChildren(el: HTMLElement) {
 	while (el.firstChild) el.removeChild(el.firstChild);
 }

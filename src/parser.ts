@@ -18,7 +18,7 @@ export interface SongRow {
 	lyrics: string;
 	repeat?: number;
 	modulation?: string;
-	prevGap?: boolean;
+	prevGap?: boolean; // <-- used by renderer for blank-line spacing
 }
 
 export interface SongSection {
@@ -27,7 +27,6 @@ export interface SongSection {
 	prevGap?: boolean;
 	rows: SongRow[];
 }
-
 export interface Song {
 	sections: SongSection[];
 }
@@ -38,7 +37,7 @@ const HEADER_RE = /^\s*\[([^\]]+)\]\s*$/; // [Section]
 const MOD_RE = /^\s*\{\s*(.+?)\s*\}\s*$/; // { Mod IV } or { I }
 const REPEAT_HINT_RE = /[\(\[]\s*x\s*(\d+)\s*[\)\]]/i;
 
-// DEGREE chord token (Roman numerals + quality/extensions). Includes sus.
+// Roman-numeral chord tokens (includes sus)
 const CHORD_RE =
 	/\b(b|#)?(I{1,3}|IV|V|VI|VII|i{1,3}|iv|v|vi|vii)(m|°|dim|aug|ø|sus\d*)?((?:maj7|6|7|9|11|13|add\d+|b\d+|#\d+)*)\b/g;
 
@@ -54,7 +53,7 @@ export function parseSong(src: string): Song {
 	let pendingMod: string | undefined;
 	let sawBlank = true;
 
-	// Track the last row across the whole song (spans sections).
+	// carry-over across sections by design
 	let lastRowGlobal: SongRow | undefined;
 
 	const newSection = (name: string) => {
@@ -71,7 +70,6 @@ export function parseSong(src: string): Song {
 		}
 		const raw = lines[i];
 
-		// [Section]
 		const h = raw.match(HEADER_RE);
 		if (h) {
 			current = newSection(h[1].trim());
@@ -80,7 +78,6 @@ export function parseSong(src: string): Song {
 			continue;
 		}
 
-		// { Mod ... } or { I }
 		const m = raw.match(MOD_RE);
 		if (m) {
 			const inner = m[1].trim();
@@ -94,7 +91,6 @@ export function parseSong(src: string): Song {
 			continue;
 		}
 
-		// Chord line + Lyrics line
 		if (i + 1 >= lines.length) break;
 		const chordLine = lines[i];
 		const lyricLine = lines[i + 1];
@@ -106,7 +102,7 @@ export function parseSong(src: string): Song {
 		if (!current) current = newSection("Untitled");
 		const repeat = extractRepeatHint(lyricLine);
 
-		const prevRowForMerge = lastRowGlobal; // may be from previous section
+		const prevRowForMerge = lastRowGlobal;
 		const row = makeRow(
 			chordLine,
 			lyricLine,
@@ -120,7 +116,7 @@ export function parseSong(src: string): Song {
 		sawBlank = false;
 
 		current.rows.push(row);
-		lastRowGlobal = row; // update global last row pointer
+		lastRowGlobal = row;
 
 		i += 2;
 	}
@@ -146,22 +142,18 @@ function makeRow(
 	const bars = extractBars(chordLine);
 	let slices = extractBarSlicesSegments(chordLine, bars);
 
-	// Carry-over logic:
-	// If this chord line does NOT start with a pipe, merge its leading slice into
-	// the last bar of the previous row (even across sections).
+	// carry-over: if no leading '|' merge head slice into previous row's last bar
 	const startsWithPipe = /^\s*\|/.test(chordLine);
 	if (
 		!startsWithPipe &&
 		prevRowGlobal &&
 		prevRowGlobal.barSlices.length > 0
 	) {
-		const head = slices.shift(); // first slice from this line
+		const head = slices.shift();
 		if (head && head.text) {
-			const lastIdx = prevRowGlobal.barSlices.length - 1;
-			const last = prevRowGlobal.barSlices[lastIdx];
-			// merge texts with single space; keep previous bar boundaries
+			const last =
+				prevRowGlobal.barSlices[prevRowGlobal.barSlices.length - 1];
 			last.text = (last.text + " " + head.text).trim();
-			// Note: we do not mutate prevRowGlobal.bars; rendering uses barSlices.
 		}
 	}
 
@@ -173,7 +165,7 @@ function makeRow(
 		lyrics,
 		repeat,
 		modulation,
-		prevGap,
+		prevGap, // <-- stored here; renderer reads it
 	};
 }
 
@@ -192,7 +184,6 @@ function extractChords(line: string): ChordToken[] {
 	return toks;
 }
 
-/** Segments between pipes, including the tail after the last '|' as a bar. */
 function extractBarSlicesSegments(line: string, bars: number[]): BarSlice[] {
 	if (bars.length === 0) {
 		const t = line.trim();
