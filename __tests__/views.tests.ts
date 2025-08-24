@@ -29,8 +29,60 @@ En que no surjas tú.
    IIIm         | IIm
 Ni yo quiero escucharla,
 
-V7            |   Imaj7
+| V7            |   Imaj7 |
 Si no la escuchas tú.
+
+[Coro]
+
+VIIsus    III#7   |  VIm7  | ♯IVm7b5
+Es que te has convertido,
+
+    VII7     |  IIIm7  |  IIIm7b5
+En parte de mi alma.
+
+   VI7     |   IIm    |   V7
+Ya nada me consuela,
+
+           |      Imaj7 | ♯VI7
+Si no estás tú también.
+
+VI7          |    IIm   ♯IIm7 IIIm7 | IVm7
+Más allá de tus labios,
+
+    ♯VI7        |  Imaj7  ♯VI7 |  VI7
+Del sol y las estrellas.
+
+             |   IIm
+Contigo en la distancia,
+
+|     V7   | Imaj7 |
+Amada mía, estoy.
+
+[Coro]
+
+VIIsus    III#7   |  VIm7  | ♯IVm7b5
+Es que te has convertido,
+
+    VII7     |  IIIm7  |  IIIm7b5
+En parte de mi alma.
+
+   VI7     |   IIm    |   V7
+Ya nada me consuela,
+
+              |   Imaj7 | ♯VI7
+Si no estás tú también.
+
+VI7          |    IIm   ♯IIm7 IIIm7 | IVm7
+Más allá de tus labios,
+
+    ♯VI7        |  Imaj7  ♯VI7 |  VI7
+Del sol y las estrellas.
+
+             |   IIm
+Contigo en la distancia,
+
+|     V7   | Imaj7 |
+Amada mía, estoy.
 \`\`\`
 `.trim();
 
@@ -51,8 +103,42 @@ No hay bella melodía,
 En que no surjas tú.
    IIIm           IIm
 Ni yo quiero escucharla,
-V7                Imaj7
+  V7                Imaj7  
 Si no la escuchas tú.
+[Coro]
+VIIsus    III♯7      VIm7    ♯IVm7♭5
+Es que te has convertido,
+    VII7        IIIm7     IIIm7♭5
+En parte de mi alma.
+   VI7         IIm        V7
+Ya nada me consuela,
+                  Imaj7   ♯VI7
+Si no estás tú también.
+VI7               IIm   ♯IIm7 IIIm7   IVm7
+Más allá de tus labios,
+    ♯VI7           Imaj7  ♯VI7    VI7
+Del sol y las estrellas.
+                 IIm
+Contigo en la distancia,
+      V7     Imaj7  
+Amada mía, estoy.
+[Coro]
+VIIsus    III♯7      VIm7    ♯IVm7♭5
+Es que te has convertido,
+    VII7        IIIm7     IIIm7♭5
+En parte de mi alma.
+   VI7         IIm        V7
+Ya nada me consuela,
+                  Imaj7   ♯VI7
+Si no estás tú también.
+VI7               IIm   ♯IIm7 IIIm7   IVm7
+Más allá de tus labios,
+    ♯VI7           Imaj7  ♯VI7    VI7
+Del sol y las estrellas.
+                 IIm
+Contigo en la distancia,
+      V7     Imaj7  
+Amada mía, estoy.
 `.trim();
 
 const EXPECT_LYRICS = `
@@ -67,6 +153,26 @@ No hay bella melodía,
 En que no surjas tú.
 Ni yo quiero escucharla,
 Si no la escuchas tú.
+
+[Coro]
+Es que te has convertido,
+En parte de mi alma.
+Ya nada me consuela,
+Si no estás tú también.
+Más allá de tus labios,
+Del sol y las estrellas.
+Contigo en la distancia,
+Amada mía, estoy.
+
+[Coro]
+Es que te has convertido,
+En parte de mi alma.
+Ya nada me consuela,
+Si no estás tú también.
+Más allá de tus labios,
+Del sol y las estrellas.
+Contigo en la distancia,
+Amada mía, estoy.
 `.trim();
 
 const EXPECT_CHORDS = `
@@ -80,13 +186,46 @@ VIm7
 II7
 IIm ♯V7
 V7
-[Verso]
 VIdim
+[Verso]
 IIm
 V7
 Imaj7
+IIm IIIm
 IIm
-IIIm
+V7
+Imaj7
+VIIsus III♯7
+[Coro]
+VIm7
+♯IVm7♭5 VII7
+IIIm7
+IIIm7♭5 VI7
+IIm
+V7
+Imaj7
+♯VI7 VI7
+IIm ♯IIm7 IIIm7
+IVm7 ♯VI7
+Imaj7 ♯VI7
+VI7
+IIm
+V7
+Imaj7
+VIIsus III♯7
+[Coro]
+VIm7
+♯IVm7♭5 VII7
+IIIm7
+IIIm7♭5 VI7
+IIm
+V7
+Imaj7
+♯VI7 VI7
+IIm ♯IIm7 IIIm7
+IVm7 ♯VI7
+Imaj7 ♯VI7
+VI7
 IIm
 V7
 Imaj7

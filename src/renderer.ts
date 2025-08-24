@@ -40,7 +40,6 @@ export function renderSong(song: Song): HTMLElement {
 		}
 		secEl.appendChild(header);
 
-		// containers we will (re)fill on resize
 		const rowsPlain = document.createElement("div");
 		rowsPlain.className = "cancionero-rows-plain";
 		secEl.appendChild(rowsPlain);
@@ -49,7 +48,6 @@ export function renderSong(song: Song): HTMLElement {
 		chart.className = "cancionero-chart";
 		secEl.appendChild(chart);
 
-		// initial fill
 		renderPlainSection(rowsPlain, sec.rows);
 		renderChartSection(chart, sec.rows);
 
@@ -58,7 +56,6 @@ export function renderSong(song: Song): HTMLElement {
 
 	// responsive reflow on resize
 	const ro = new ResizeObserver(() => {
-		// re-render only the plain rows (Both/Lyrics views)
 		const secNodes = content.querySelectorAll(".cancionero-section");
 		secNodes.forEach((secNode, idx) => {
 			const rowsPlain = secNode.querySelector(
@@ -71,7 +68,7 @@ export function renderSong(song: Song): HTMLElement {
 	ro.observe(content);
 
 	function renderPlainSection(container: HTMLElement, rows: SongRow[]) {
-		const chW = measureChar(container); // px width of one monospace glyph
+		const chW = measureChar(container);
 		const maxCols = Math.max(
 			1,
 			Math.floor(container.getBoundingClientRect().width / chW) - 2,
@@ -83,7 +80,6 @@ export function renderSong(song: Song): HTMLElement {
 				(a, b) => a.startCol - b.startCol,
 			);
 
-			// wrap both strings to the same column windows
 			const segments = wrapPair(chordLine, row.lyrics, maxCols);
 
 			for (const seg of segments) {
@@ -116,10 +112,13 @@ export function renderSong(song: Song): HTMLElement {
 		let badgeRepeat: number | undefined;
 
 		for (const row of rows) {
-			if (row.barSlices.length === 0) continue;
+			if (!row.barSlices.length) continue;
 
 			row.barSlices.forEach((slice, idx) => {
-				acc.push(slice.text);
+				const txt = slice.text.trim(); // trim and skip empties
+				if (!txt) return;
+
+				acc.push(txt);
 
 				const isRowEnd = idx === row.barSlices.length - 1;
 				if (isRowEnd && row.repeat && row.repeat > 1) {
@@ -153,22 +152,20 @@ export function renderSong(song: Song): HTMLElement {
 		const frag = document.createDocumentFragment();
 		let cursor = start;
 
-		// tokens that overlap this window
 		for (const t of toks) {
 			const tStart = t.startCol;
 			const tEnd = t.startCol + t.text.length;
 			if (tEnd <= start) continue;
 			if (tStart >= end) break;
 
-			// text before token
-			if (tStart > cursor)
+			if (tStart > cursor) {
 				frag.appendChild(
 					document.createTextNode(
 						line.slice(cursor, Math.min(tStart, end)),
 					),
 				);
+			}
 
-			// token clipped to window
 			const s = Math.max(tStart, start);
 			const e = Math.min(tEnd, end);
 			const strong = document.createElement("strong");
@@ -180,7 +177,6 @@ export function renderSong(song: Song): HTMLElement {
 
 			cursor = e;
 		}
-		// trailing text
 		if (cursor < end)
 			frag.appendChild(document.createTextNode(line.slice(cursor, end)));
 		return frag;
@@ -197,7 +193,6 @@ export function renderSong(song: Song): HTMLElement {
 		while (i < L) {
 			let limit = Math.min(i + maxCols, L);
 			if (limit < L) {
-				// prefer breaking on a space in the lyrics window
 				const window = lyrics.slice(i, limit);
 				const lastSpace = window.lastIndexOf(" ");
 				if (lastSpace > 0) limit = i + lastSpace + 1;

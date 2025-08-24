@@ -1,3 +1,10 @@
-// JSDOM lacks ResizeObserver. Stub it.
-class ResizeObserver { observe(){} unobserve(){} disconnect(){} }
-(global as any).ResizeObserver = ResizeObserver;
+// tests/setupTests.ts
+
+// Mark this file as a module to satisfy --isolatedModules
+export {};
+
+(global as any).ResizeObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
